@@ -1,0 +1,72 @@
+***LISTVIEWS AND ADAPTERS***
+
+SIMPLE LISTVIEW
+-Used to display elements in a list
+-The user can scroll through the list of the displayed items, and usually upon clicking an item this
+triggers something
+-Given the list of data items, to display
+    .Must prepare an adapter
+    .Pass the adapter to the ListView
+    .Also you need to set the layout for each item displayed in the ListView
+-Adapter -> retrieves the data from the data list or database result provided. It will also render
+the items in the ListView
+-The adapter classes are bridging classes that bind data to user-interface Views
+-The ArrayAdapter is not limited to a String array
+    .Any Java Object
+    .toString() must be overridden -> determines what each row will display
+-ArrayAdapter allows for dynamic modifications to the underlying data
+    .add() method will append a new value on the end of the array data
+    .insert(), remove()
+    .To re-sync the ListView, either call the "notifyDataSetChanged()" method of the adapter or set
+    "setNotifyOnChange(true)"
+-ArrayAdapter's constructor does NOT copy references to each of the elements in the array or list.
+Instead, it directly uses the list that's passed in. So if you are going to use add(), insert(), you
+should provide an ArrayList not an Array.
+
+EXTENDING THE ARRAYADAPTER
+-Each row is a list item
+-Each list item has a layout that describes how the row should be displayed
+-For added functionality, you can create your own adapter by extending an existing adapter implementation
+ex. ArrayAdapter
+    .The most important method is getView(). This method is called for every line in the ListView. It
+    also creates(inflates) the View to display.
+    .getView() -> the ListView will ask us for a View object to represent each list item it needs to display
+-To extend the Adapter
+    .Create a custom layout to be used to represent each row of the ListView
+    .Extend the ArrayAdapter class
+        -Create a constructor
+        -Override the getView() method
+    .You will need to inflate the custom layout using the LayoutInflator Class
+-Within the getView() method you would inflate an XML layout to be used for each of the list items
+and then set the values of the individualViews in the layout
+    .For inflating an XML layout you can use the system service LayoutInflator
+    .This service can get accessed via the Activity or via the
+    context.getSystemService(Context.LAYOUT_INFLATOR_SERVICE) method call
+-After inflating the XML layout into a view, the individual elements in the layout can be found
+via the findViewById() method call
+
+PERFORMANCE TIPS FOR LISTVIEWS
+-Each time getView gets called, we are inflating which is resource intensive
+-ListViews are designed for scalability and performance which means:
+    .ListViews will only render and display a number of items visible on the screen
+    .ListViews provide mechanisms to reuse views and reduce the number of new view inflations
+-ListViews provide recycling for non-visible views as you swipe up or down
+-Enables devs to simply reuse views from the recycle pool instead of inflating a new layout for every
+row
+
+HOW TO RECYCLE VIEWS?
+-When the user scrolls up/down, the Adapter offers the getView() method a View object that represents
+a non-visible previous row so that it can be reused for the newly visible row
+    .The view is passed as the convertView parameter of the getView()
+-By reusing the provided View we can enhance the adapter's perf and avoid inflating of the XML layout
+file to generate a new row layout
+-If no View is available for reuse, the getView() method will be passed a NULL converView param
+-The getView() is called several times, which also will call findViewById() several times. This can
+slow down performance
+-A simple approach is to use a view holder pattern.
+    .Create a ViewHolder class to hold the required View components
+    .A ViewHolder object stores each of the component views inside the tag field of the Layout, so you
+    can immediately access them without the need to look them up repeatedly*.
+
+https://developer.android.com/guide/topics/ui/layout/recyclerview.html
+https://developer.android.com/guide/topics/ui/layout/cardview.html
